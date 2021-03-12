@@ -3,7 +3,20 @@
 package steam_cgo
 
 /*
-#cgo darwin LDFLAGS: -L${SRCDIR} -lsteam_api
+#cgo CXXFLAGS: -std=c++11
+#cgo CPPFLAGS: -isystem ${SRCDIR}/sdk/public
+#cgo LDFLAGS: -Wl,-rpath,$ORIGIN
+
+#cgo windows,386 LDFLAGS: -L ${SRCDIR}/sdk/redistributable_bin
+#cgo windows,amd64 LDFLAGS: -L ${SRCDIR}/sdk/redistributable_bin/win64
+
+#cgo linux,386 LDFLAGS: -L ${SRCDIR}/sdk/redistributable_bin/linux32
+#cgo linux,amd64 LDFLAGS: -L ${SRCDIR}/sdk/redistributable_bin/linux64
+
+#cgo darwin LDFLAGS: -L ${SRCDIR}/sdk/redistributable_bin/osx
+
+#cgo linux windows,386 darwin LDFLAGS: -lsteam_api
+#cgo windows,amd64 LDFLAGS: -lsteam_api64
 
 #include "./wrapper.h"
 */

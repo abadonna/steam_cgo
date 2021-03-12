@@ -5,21 +5,25 @@
 	"tasks": [
 		{
 			"label": "GO:Compile",
-            "type": "shell",
-            "command": "go test -c"
+			"type": "shell",
+			"command": "go test -c",
+			"problemMatcher": []
 		},
 		{
 			"label": "GO:Test",
-            "type": "shell",
-            "command": "./steam_cgo.test"
+			"type": "shell",
+			"command": "./steam_cgo.test"
 		},
 		{
 			"label": "GO:Build",
-			"dependsOn": ["GO:Compile", "GO:Test"],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+			"dependsOn": [
+				"GO:Compile",
+				"GO:Test"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		}
 	]
 }
