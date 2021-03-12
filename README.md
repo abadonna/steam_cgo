@@ -1,13 +1,13 @@
 #  Steamworks 1.51 wrapper for GO to get\set achievements
 
-Do not forget to copy libsteam_api
+Do not forget to copy steam_api library.
 
 ## Use example
 
 ```
 var steam Steamworks
 
-func TestMain(m *testing.M) {
+func main() {
     steam = Steamworks{}
     if steam.Init() {
         defer steam.Shutdown()
