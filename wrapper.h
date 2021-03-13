@@ -12,3 +12,4 @@ bool GetAchievement(const char * name);
 uint32_t GetNumAchievements();
 const char* GetAchievementName(uint32_t index);
 bool UnlockAchievement(const char * name);
+bool StoreStats();

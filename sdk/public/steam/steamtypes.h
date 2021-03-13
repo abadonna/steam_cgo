@@ -4,6 +4,8 @@
 //
 //=============================================================================
 
+#include <inttypes.h>
+
 #ifndef STEAMTYPES_H
 #define STEAMTYPES_H
 #ifdef _WIN32

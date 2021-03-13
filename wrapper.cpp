@@ -81,3 +81,7 @@ const char* GetAchievementName(uint32_t index) {
 bool UnlockAchievement(const char * name){
 	return SteamUserStats()->SetAchievement(name);
 }
+
+bool StoreStats() {
+	return SteamUserStats()->StoreStats();
+}

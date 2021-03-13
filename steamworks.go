@@ -22,7 +22,6 @@ package steam_cgo
 */
 import "C"
 import (
-	"fmt"
 	"time"
 )
 
@@ -31,15 +30,14 @@ type Callback func()
 
 //Steamworks client
 type Steamworks struct {
-	appID             uint
-	userStatsListener Callback
+	appID uint
 }
 
 const (
 	userStatsRecieved = 1
 )
 
-//Init - call before use
+//Init - call before use other methods
 func (client *Steamworks) Init() bool {
 	client.appID = uint(C.Init())
 	return client.appID > 0
@@ -47,24 +45,26 @@ func (client *Steamworks) Init() bool {
 
 //Shutdown - should be called during process shutdown if possible.
 func (client *Steamworks) Shutdown() {
-	fmt.Println("shutting down")
 	C.Shutdown()
 }
 
-//IsActive - true if client is ready.
-func (client *Steamworks) IsActive() bool {
+//IsValid - true if client is ready.
+func (client *Steamworks) IsValid() bool {
 	return client.appID > 0
 }
 
 //RequestUserStats - call and wait for callback
 func (client *Steamworks) RequestUserStats(callback Callback) bool {
-	client.userStatsListener = callback
 
 	go func() {
 		for range time.Tick(time.Second) {
 			i := C.Dispatch(C.uint(client.appID))
 			if i == userStatsRecieved {
-				client.userStatsListener()
+
+				if callback != nil {
+					callback()
+				}
+
 				return
 			}
 		}
@@ -73,7 +73,7 @@ func (client *Steamworks) RequestUserStats(callback Callback) bool {
 	return bool(C.RequestUserStats())
 }
 
-//GetAllAchievements -
+//GetAllAchievements - should be called after receiving callback from RequestUserStats
 func (client *Steamworks) GetAllAchievements() map[string]bool {
 	achievements := make(map[string]bool)
 	count := uint(C.GetNumAchievements())
@@ -87,14 +87,25 @@ func (client *Steamworks) GetAllAchievements() map[string]bool {
 	return achievements
 }
 
-//GetAchievement -
+//GetAchievement - should be called after receiving callback from RequestUserStats
 func (client *Steamworks) GetAchievement(name string) bool {
 	value := C.GetAchievement(C.CString(name))
 	return bool(value)
 }
 
-//UnlockAchievement -
+//UnlockAchievement - should be called after receiving callback from RequestUserStats
 func (client *Steamworks) UnlockAchievement(name string) bool {
 	value := C.UnlockAchievement(C.CString(name))
+
+	go func() {
+		for range time.Tick(time.Second) {
+			//If StoreStats fails then nothing is sent to the server.
+			//It's advisable to keep trying until the call is successful.
+			if bool(C.StoreStats()) {
+				return
+			}
+		}
+	}()
+
 	return bool(value)
 }
